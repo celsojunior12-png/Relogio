@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hora Certa</title>
+
+    <style>
+        /* Remove margens padrão */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Configuração da página com gradiente baseado na logo (Azul ao Verde) */
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #1b418c 0%, #3a7bd5 50%, #74b72e 100%);
+            color: #17253a;
+            text-align: center;
+        }
+
+        /* Cabeçalho */
+        header {
+            width: 100%;
+            padding: 25px 20px;
+            background: #ffffff;
+            border-bottom: 5px solid #1b418c;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        header h1 {
+            font-size: clamp(32px, 5vw, 60px);
+            font-weight: bold;
+            color: #1b418c;
+        }
+
+        /* Área central */
+        main {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 35px;
+            padding: 20px;
+        }
+
+        /* Relógio */
+        #relogio {
+            font-size: clamp(60px, 13vw, 140px);
+            font-weight: bold;
+            letter-spacing: 4px;
+            background: #ffffff;
+            color: #1b418c;
+            padding: 25px 50px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Botão */
+        #botao {
+            font-size: clamp(20px, 3vw, 28px);
+            font-weight: bold;
+            padding: 20px 45px;
+            border: none;
+            border-radius: 20px;
+            background: #1b418c;
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        /* Efeitos no botão */
+        #botao:hover {
+            transform: scale(1.05);
+            background: #14326d;
+        }
+
+        #botao:active {
+            transform: scale(0.95);
+        }
+
+        /* Rodapé */
+        footer {
+            width: 100%;
+            padding: 15px 20px;
+            background: #ffffff;
+            border-top: 5px solid #74b72e;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Container flexível para organizar a logo e os textos no rodapé */
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 15px;
+        }
+
+        /* Estilização dos logos do rodapé */
+        .logo-rodapé {
+            height: clamp(50px, 8vw, 80px);
+            width: auto;
+            object-fit: contain;
+        }
+
+        .footer-texto p {
+            font-size: clamp(16px, 2.5vw, 24px);
+            font-weight: bold;
+            color: #17253a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Nome do projeto -->
+    <header>
+        <h1>Hora Certa</h1>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main>
+        <!-- Relógio -->
+        <div id="relogio">00:00:00</div>
+
+        <!-- Botão físico / teste -->
+        <button id="botao">🔊 FALAR A HORA</button>
+    </main>
+
+    <!-- Rodapé com o logo em cada lado -->
+    <footer>
+        <div class="footer-container">
+            <img src="logo colegio.png" alt="Logo Colégio" class="logo-rodapé">
+            
+            <div class="footer-texto">
+                <p>Colégio Estadual James Patrick Clark</p>
+                <p>Programação</p>
+            </div>
+
+            <img src="logo colegio.png" alt="Logo Colégio" class="logo-rodapé">
+        </div>
+    </footer>
+
+    <script>
+        /*
+        =====================================================
+        RELÓGIO DIGITAL
+        =====================================================
+        */
+        function atualizarRelogio() {
+            const agora = new Date();
+
+            const horas = String(agora.getHours()).padStart(2, "0");
+            const minutos = String(agora.getMinutes()).padStart(2, "0");
+            const segundos = String(agora.getSeconds()).padStart(2, "0");
+
+            const horario = `${horas}:${minutos}:${segundos}`;
+            document.getElementById("relogio").textContent = horario;
+        }
+
+        atualizarRelogio();
+        setInterval(atualizarRelogio, 1000);
+
+        /*
+        =====================================================
+        FUNÇÃO PARA FALAR A HORA (Com ajuste de concordância)
+        =====================================================
+        */
+        function falarHora() {
+            const agora = new Date();
+            const horas = agora.getHours();
+            const minutos = agora.getMinutes();
+
+            const textoHora = horas === 1 ? "hora" : "horas";
+            const textoMinuto = minutos === 1 ? "minuto" : "minutos";
+            const verbo = horas === 1 ? "é" : "são";
+
+            let texto;
+            if (minutos === 0) {
+                texto = `Agora ${verbo} ${horas} ${textoHora}.`;
+            } else {
+                texto = `Agora ${verbo} ${horas} ${textoHora} e ${minutos} ${textoMinuto}.`;
+            }
+
+            const fala = new SpeechSynthesisUtterance(texto);
+            fala.lang = "pt-BR";
+            fala.rate = 0.9;
+
+            speechSynthesis.cancel();
+            speechSynthesis.speak(fala);
+        }
+
+        /*
+        =====================================================
+        EVENTOS (Clique e Tecla Espaço para Makey Makey)
+        =====================================================
+        */
+        document.getElementById("botao").addEventListener("click", falarHora);
+
+        document.addEventListener("keydown", function(event) {
+            if (event.code === "Space") {
+                event.preventDefault();
+                falarHora();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
